@@ -5,6 +5,20 @@ app = Flask(__name__)
 # sem o secret key, o session(cookie), nao funciona
 app.secret_key = 'Rondi'
 
+class Usuario:
+    def __init__(self, nome, nickname, senha):
+        self.nome = nome
+        self.nickname = nickname
+        self.senha = senha
+        
+usuario1 = Usuario("Bruno Divino", "BD", "alohomora")
+usuario2 = Usuario("Camila Ferreira", "Mila", "paozinho")
+usuario3 = Usuario("Guilherme Louro", "Cake", "python_eh_vida")
+
+usuarios = { usuario1.nickname :usuario1, 
+                usuario2.nickname :usuario2,
+                usuario3.nickname :usuario3 }
+
 # Classe jogo para instanciar objetos
 class Jogo:
     def __init__(self, nome, categoria, console):
@@ -64,11 +78,11 @@ def criar_jogo():
 # pagina de validacao de login | dados vem do formulario da pagina login.html
 @app.route('/autenticar', methods=['POST'])
 def autenticar():
-    # SE a senha estiver correta
-    if '123' == request.form['senha']:
-        # session == cookie | recebe o nome do usuario conforme input da pagina de login
-        session['usuario_logado'] = request.form['usuario']
-        flash(session['usuario_logado'] + ' logado com sucesso!')
+    if request.form['usuario'] in usuarios:
+        usuario = usuarios [request.form['usuario']]
+        if request.form['senha'] == usuario.senha:
+            session['usuario_logado'] = usuario.nickname
+            flash(usuario.nickname + ' logado com sucesso')
         # direciona para a pagina de criar jogos
         return redirect(url_for('novo_jogo'))
     else:
