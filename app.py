@@ -1,33 +1,55 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, flash
+
+app = Flask(__name__)
+app.secret_key = 'Rondi'
 
 class Jogo:
     def __init__(self, nome, categoria, console):
         self.nome = nome
         self.categoria = categoria
-        self.console= console
-        
-jogo1= Jogo('Tetris', 'Puzzle', 'Atari')
-jogo2= Jogo('God of War', 'Rack n Slash', 'PS2')
-jogo3= Jogo('Mortal Kombat', 'Luta', 'PS2')
-lista = [jogo1, jogo2, jogo3]
+        self.console = console
+ 
+jogo1 = Jogo("The Legend of Zelda: Breath of the Wild", "Aventura", "Nintendo Switch")
+jogo2 = Jogo("God of War Ragnarök", "Ação", "PlayStation 5")
+jogo3 = Jogo("Halo Infinite", "FPS", "Xbox Series X")  
 
-app = Flask(__name__)
+lista = [jogo1,jogo2,jogo3]
 
 @app.route('/')
 def index():
-    return render_template('lista.html', titulo='Jogos', jogos = lista)
+    return render_template('lista.html', jogos = lista, titulo = 'Jogos')
 
-@app.route('/novo')
-def novo():
-    return render_template('novo.html', titulo = 'Novo Jogo')
+@app.route('/novo', methods = ['GET'])
+def novo_jogo():
+    return render_template('novo.html', titulo = 'Inserir Novo Jogo')
 
-@app.route('/criar', methods=['POST'])
-def criar():
+@app.route('/criar', methods = ['POST'])
+def criar_jogo():
     nome = request.form['nome']
     categoria = request.form['categoria']
     console = request.form['console']
-    jogo = Jogo(nome, categoria, console)
-    lista.append(jogo)
+    novo_jogo = Jogo(nome,categoria,console)
+    lista.append(novo_jogo)
     return redirect('/')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/autenticar', methods=['POST'])
+def autenticar():
+    if '123' == request.form['senha']:
+        session['usuario_logado'] = request.form['usuario']
+        flash(session['usuario_logado'] + ' logado com sucesso!')
+        return redirect('/')
+    else:
+        flash('Usuario ou senha incorreto.')
+        return redirect('/login')
+    
+@app.route('/logout')
+def logout():
+     session['usuario_logado'] = None
+     flash('Logout efetuado com sucesso!')
+     return redirect('/') 
 
 app.run(host='0.0.0.0', port=8080, debug=True)
