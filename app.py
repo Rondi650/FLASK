@@ -14,10 +14,12 @@ class Usuario:
 usuario1 = Usuario("Bruno Divino", "BD", "alohomora")
 usuario2 = Usuario("Camila Ferreira", "Mila", "paozinho")
 usuario3 = Usuario("Guilherme Louro", "Cake", "python_eh_vida")
+usuario4 = Usuario('Rondinelle Oliveira','Rondi', '123')
 
 usuarios = { usuario1.nickname :usuario1, 
                 usuario2.nickname :usuario2,
-                usuario3.nickname :usuario3 }
+                usuario3.nickname :usuario3,
+                usuario4.nickname: usuario4}
 
 # Classe jogo para instanciar objetos
 class Jogo:
@@ -78,9 +80,11 @@ def criar_jogo():
 # pagina de validacao de login | dados vem do formulario da pagina login.html
 @app.route('/autenticar', methods=['POST'])
 def autenticar():
-    if request.form['usuario'] in usuarios:
-        usuario = usuarios [request.form['usuario']]
-        if request.form['senha'] == usuario.senha:
+    nickname = request.form['usuario']
+    senha = request.form['senha']
+    if nickname in usuarios:
+        usuario = usuarios[nickname]
+        if senha == usuario.senha:
             session['usuario_logado'] = usuario.nickname
             flash(usuario.nickname + ' logado com sucesso')
         # direciona para a pagina de criar jogos
@@ -88,7 +92,7 @@ def autenticar():
     else:
         flash('Usuario ou senha incorreto.')
         # SE a senha estiver errada, volta eternamente para a pagina de login
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
     
 # pagina de logout, desativa os cookies
 @app.route('/logout')
