@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{url_for('static', filename='bootstrap.css')}}" >
 </head>
 <body>
+  <header class="container py-3 mb-4 border-bottom d-flex align-items-center">
+    <h1 class="me-4 fw-bold text-primary mb-0 flex-shrink-0">GameHub</h1>
+    <nav class="nav flex-grow-1 justify-content-center">
+      <a class="nav-link btn btn-outline-primary bg-white mx-2 px-4 py-2 rounded-pill shadow-sm fw-bold" href="/novo">Criar Jogo</a>
+      <a class="nav-link btn btn-outline-secondary bg-white mx-2 px-4 py-2 rounded-pill shadow-sm fw-bold" href="/">Principal</a>
+    </nav>
+    <a class="nav-link btn btn-outline-danger bg-white ms-auto px-4 py-2 rounded-pill shadow-sm fw-bold" href="/logout">Logout</a>
+  </header>
   <div class="container">
 
         {% with messages = get_flashed_messages() %}
