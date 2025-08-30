@@ -11,7 +11,6 @@ class Usuario(db.Model):
     nickname = db.Column(db.String(20), unique=True)
     senha = db.Column(db.String(100))
 
-
 class Jogo(db.Model):
     __tablename__ = 'jogos'
     

@@ -7,6 +7,10 @@ app.secret_key = 'Rondi'
 # Inicializa o db com o app
 init_app(app)
 
+# Cria as tabelas caso elas nao existam
+with app.app_context():
+    db.create_all()
+
 @app.route('/login')
 def login():
     return render_template('login.html')
