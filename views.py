@@ -20,6 +20,24 @@ def novo_jogo():
         return redirect(url_for('login'))
     return render_template('novo.html', titulo='Inserir Novo Jogo')
 
+@app.route('/editar/<int:id>', methods=['GET'])
+def editar(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect(url_for('login'))
+    jogos = Jogo.query.filter_by(id=id).first()
+    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos)
+
+@app.route('/atualizar', methods = ['POST'])
+def atualizar():
+    id = request.form['id']
+    jogo = Jogo.query.filter_by(id=id).first()
+    jogo.nome = request.form['nome']
+    jogo.categoria = request.form['categoria']
+    jogo.console = request.form['console']
+    db.session.add(jogo)
+    db.session.commit()   
+    return redirect(url_for('index'))
+    
 @app.route('/criar', methods=['POST'])
 def criar_jogo():
     nome = request.form['nome']

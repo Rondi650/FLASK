@@ -2,7 +2,6 @@ from flask import Flask
 from database import db
 from config import SECRET_KEY, init_app
 
-
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 init_app(app)
