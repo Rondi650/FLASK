@@ -1,6 +1,7 @@
 {% extends "template.html" %}
 {% block conteudo %}
-      <form action="{{ url_for('criar_jogo') }}" method="post"> <!-- direciona para o app.route -->
+      <form action="{{ url_for('criar_jogo') }}" method="post" enctype="multipart/form-data"> <!-- direciona para o app.route -->
+        <input type="file" name="arquivo" accept=".jpg, .png">
         <fieldset>
           <div class="form-group">
             <label for="nome">Nome</label>

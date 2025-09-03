@@ -27,6 +27,15 @@ def editar(id):
     jogos = Jogo.query.filter_by(id=id).first()
     return render_template('editar.html', titulo='Editando Jogo', jogos = jogos)
 
+@app.route('/deletar/<int:id>')
+def deletar(id):
+    jogo = Jogo.query.filter_by(id=id).first()
+    if jogo:
+        db.session.delete(jogo)
+        db.session.commit()
+        flash('Jogo deletado com sucesso')
+    return redirect(url_for('index'))
+
 @app.route('/atualizar', methods = ['POST'])
 def atualizar():
     id = request.form['id']
@@ -35,7 +44,7 @@ def atualizar():
     jogo.categoria = request.form['categoria']
     jogo.console = request.form['console']
     db.session.add(jogo)
-    db.session.commit()   
+    db.session.commit()       
     return redirect(url_for('index'))
     
 @app.route('/criar', methods=['POST'])
@@ -47,6 +56,11 @@ def criar_jogo():
     db.session.add(jogo)
     db.session.commit()
     flash('Jogo criado com sucesso!')
+    
+    arquivo = request.files['arquivo']
+    upload_path = app.config['UPLOAD_PATH']
+    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
+    
     return redirect(url_for('index'))
 
 @app.route('/autenticar', methods=['POST'])
