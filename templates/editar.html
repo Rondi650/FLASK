@@ -1,6 +1,16 @@
 {% extends "template.html" %}
 {% block conteudo %}
-      <form action="{{url_for('atualizar')}}" method="post"> <!-- direciona para o app.route -->
+      <form action="{{url_for('atualizar')}}" method="post" enctype="multipart/form-data"> <!-- direciona para o app.route -->
+
+        <figure>
+          <img src="{{url_for('imagem', nome_arquivo=capa_jogo)}}">
+          <figcaption>
+            <label for="arquivo">Mudar Capa</label>
+              <input type="file" name="arquivo" accept=".jpg, .png">
+          </figcaption>
+        </figure>
+
+
         <input type="hidden" name="id" value="{{jogos.id}}">
         <fieldset>
           <div class="form-group">

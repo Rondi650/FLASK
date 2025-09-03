@@ -1,7 +1,8 @@
-from flask import render_template, redirect, url_for, request, session, flash
+from flask import render_template, redirect, url_for, request, session, flash, send_from_directory
 from models import Usuario, Jogo
 from database import db
 from app import app
+from helpers import recupera_imagem
 
 @app.route('/login')
 def login():
@@ -25,7 +26,11 @@ def editar(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login'))
     jogos = Jogo.query.filter_by(id=id).first()
-    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos)
+    
+    capa_jogo = recupera_imagem(id)
+    print(capa_jogo)
+    
+    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos, capa_jogo = capa_jogo)
 
 @app.route('/deletar/<int:id>')
 def deletar(id):
@@ -45,6 +50,11 @@ def atualizar():
     jogo.console = request.form['console']
     db.session.add(jogo)
     db.session.commit()       
+    
+    arquivo = request.files['arquivo']
+    upload_path = app.config['UPLOAD_PATH']
+    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
+    
     return redirect(url_for('index'))
     
 @app.route('/criar', methods=['POST'])
@@ -81,3 +91,9 @@ def logout():
     session['usuario_logado'] = None
     flash('Logout efetuado com sucesso!')
     return redirect(url_for('login'))
+
+@app.route('/uploads/<nome_arquivo>')
+def imagem(nome_arquivo):
+    return send_from_directory('uploads', nome_arquivo)
+
+
