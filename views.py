@@ -2,7 +2,8 @@ from flask import render_template, redirect, url_for, request, session, flash, s
 from models import Usuario, Jogo
 from database import db
 from app import app
-import os
+from helpers import procurar_capa, deleta_arquivo
+import time
 
 @app.route('/login')
 def login():
@@ -38,6 +39,7 @@ def deletar(id):
         db.session.delete(jogo)
         db.session.commit()
         flash('Jogo deletado com sucesso')
+        deleta_arquivo(jogo.id)
     return redirect(url_for('index'))
 
 @app.route('/atualizar', methods = ['POST'])
@@ -50,9 +52,11 @@ def atualizar():
     db.session.add(jogo)
     db.session.commit()         
     flash('Jogo editado com sucesso!') 
-    
+
     arquivo = request.files['arquivo']
-    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}.jpg')
+    timestamp = time.time()
+    deleta_arquivo(jogo.id)
+    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}-{timestamp}.jpg')
     
     return redirect(url_for('index'))
     
@@ -67,7 +71,8 @@ def criar_jogo():
     flash('Jogo criado com sucesso!')
     
     arquivo = request.files['arquivo']
-    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}.jpg')
+    timestamp = time.time()
+    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}-{timestamp}.jpg')
     
     return redirect(url_for('index'))
 
@@ -93,9 +98,3 @@ def logout():
 @app.route('/imagem/<nome_arquivo>')
 def criar_imagem(nome_arquivo):
     return send_from_directory(app.config['UPLOAD_PATH'],nome_arquivo)
-
-def procurar_capa(id):
-    for capa_nome in os.listdir(app.config['UPLOAD_PATH']):
-        if capa_nome == f'capa{id}.jpg':
-            return capa_nome
-    return 'capa_padrao.jpg'
