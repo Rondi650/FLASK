@@ -2,16 +2,14 @@
 {% block conteudo %}
       <form action="{{ url_for('criar_jogo') }}" method="post" enctype="multipart/form-data"> <!-- direciona para o app.route -->
 
-        <figure>
-          <img src="{{url_for('imagem', nome_arquivo='capa_padrao.png')}}">
-          <figcaption>
-            <label for="arquivo">Mudar Capa</label>
-              <input type="file" name="arquivo" accept=".jpg, .png">
-          </figcaption>
-        </figure>
-        
+        <div class="imagem-capa-area">
+        <label for="imagem_capa">Imagem Capa</label>
+        <img src="{{url_for('criar_imagem', nome_arquivo='capa_padrao.jpg')}}">
+        <input type="file" name="arquivo" enctype="multipart/form-data">
+        </div>
+
         <fieldset>
-          <div class="form-group">
+          <div class="form-group">  
             <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" class="form-control">
           </div>

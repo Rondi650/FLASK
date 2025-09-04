@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, request, session, flash, s
 from models import Usuario, Jogo
 from database import db
 from app import app
-from helpers import recupera_imagem
+import os
 
 @app.route('/login')
 def login():
@@ -25,12 +25,11 @@ def novo_jogo():
 def editar(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login'))
-    jogos = Jogo.query.filter_by(id=id).first()
+    jogos = Jogo.query.filter_by(id=id).first()   
     
-    capa_jogo = recupera_imagem(id)
-    print(capa_jogo)
+    capa_jogo = procurar_capa(jogos.id)
     
-    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos, capa_jogo = capa_jogo)
+    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos, capa_jogo=capa_jogo)
 
 @app.route('/deletar/<int:id>')
 def deletar(id):
@@ -49,11 +48,11 @@ def atualizar():
     jogo.categoria = request.form['categoria']
     jogo.console = request.form['console']
     db.session.add(jogo)
-    db.session.commit()       
+    db.session.commit()         
+    flash('Jogo editado com sucesso!') 
     
     arquivo = request.files['arquivo']
-    upload_path = app.config['UPLOAD_PATH']
-    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
+    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}.jpg')
     
     return redirect(url_for('index'))
     
@@ -68,8 +67,7 @@ def criar_jogo():
     flash('Jogo criado com sucesso!')
     
     arquivo = request.files['arquivo']
-    upload_path = app.config['UPLOAD_PATH']
-    arquivo.save(f'{upload_path}/capa{jogo.id}.jpg')
+    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}.jpg')
     
     return redirect(url_for('index'))
 
@@ -92,8 +90,12 @@ def logout():
     flash('Logout efetuado com sucesso!')
     return redirect(url_for('login'))
 
-@app.route('/uploads/<nome_arquivo>')
-def imagem(nome_arquivo):
-    return send_from_directory('uploads', nome_arquivo)
+@app.route('/imagem/<nome_arquivo>')
+def criar_imagem(nome_arquivo):
+    return send_from_directory(app.config['UPLOAD_PATH'],nome_arquivo)
 
-
+def procurar_capa(id):
+    for capa_nome in os.listdir(app.config['UPLOAD_PATH']):
+        if capa_nome == f'capa{id}.jpg':
+            return capa_nome
+    return 'capa_padrao.jpg'
