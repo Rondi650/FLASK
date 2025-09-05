@@ -1,16 +1,25 @@
 {% extends "template.html" %}
 {% block cabecalho %}
-  <header class="container py-3 mb-4 border-bottom d-flex align-items-center">
-    <h1 class="me-4 fw-bold text-primary mb-0 flex-shrink-0">GameHub</h1>
-  </header>
+<header class="container py-3 mb-4 border-bottom d-flex align-items-center">
+  <h1 class="me-4 fw-bold text-primary mb-0 flex-shrink-0">GameHub</h1>
+</header>
 {% endblock %}
 {% block conteudo %}
-     
-     <h1>Faça seu login</h1>
-        <form method="POST" action="{{url_for('autenticar')}}">  <!-- direciona para o app.route -->
-            <p><label>Nome de usuário:</label> <input class="form-control" type="text" name="usuario" required></p>
-            <p><label>Senha:</label> <input class="form-control" type="password" name="senha" required></p>
-            <p><button class="btn btn-primary" type="submit">Entrar</button></p>
-        </form>
-    </div>
+
+<h1>Faça seu login</h1>
+<form method="POST" action="{{url_for('autenticar')}}"> <!-- direciona para o app.route -->
+  {{form.csrf_token()}}
+  <p>
+    {{ form.nickname.label() }}
+    {{ form.nickname(class="form-control") }}
+  </p>
+  <p>
+    {{ form.senha.label() }}
+    {{ form.senha(class="form-control") }}
+  </p>
+  <p>
+    {{ form.salvar(class="btn btn-primary") }}
+  </p>
+</form>
+</div>
 {% endblock %}

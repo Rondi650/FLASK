@@ -11,7 +11,8 @@ csrf = CSRFProtect(app)
 with app.app_context():
     db.create_all()
     
-from views import *
+from views_jogo import *
+from views_usuarios import *
 
 if __name__ == '__main__':
     app.run(debug=True)

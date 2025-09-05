@@ -1,14 +1,10 @@
 from flask import render_template, redirect, url_for, request, session, flash, send_from_directory
-from models import Usuario, Jogo
+from models import Jogo
 from database import db
 from app import app
 from helpers import procurar_capa, deleta_arquivo
 import time
 from forms import FormularioJogo
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
 
 @app.route('/')
 def index():
@@ -55,7 +51,6 @@ def atualizar():
     form = FormularioJogo(request.form)
     
     if form.validate_on_submit():
-        
         id = request.form['id']
         jogo = Jogo.query.filter_by(id=id).first()
         jogo.nome = form.nome.data
@@ -93,25 +88,6 @@ def criar_jogo():
     arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}-{timestamp}.jpg')
     
     return redirect(url_for('index'))
-
-@app.route('/autenticar', methods=['POST'])
-def autenticar():
-    nickname = request.form['usuario']
-    senha = request.form['senha']
-    usuario = Usuario.query.filter_by(nickname=nickname).first()
-    if usuario and senha == usuario.senha:
-        session['usuario_logado'] = usuario.nickname
-        flash(usuario.nickname + ' logado com sucesso')
-        return redirect(url_for('index'))
-    else:
-        flash('Usuario ou senha incorreto.')
-        return redirect(url_for('login'))
-
-@app.route('/logout')
-def logout():
-    session['usuario_logado'] = None
-    flash('Logout efetuado com sucesso!')
-    return redirect(url_for('login'))
 
 @app.route('/imagem/<nome_arquivo>')
 def criar_imagem(nome_arquivo):
