@@ -1,0 +1,28 @@
+{% extends "template.html" %}
+{% block cabecalho %}
+<header class="container py-3 mb-4 border-bottom d-flex align-items-center">
+    <h1 class="me-4 fw-bold text-primary mb-0 flex-shrink-0">GameHub</h1>
+</header>
+{% endblock %}
+{% block conteudo %}
+
+<h1>Cadastro</h1>
+<form action="{{url_for('novo_usuario')}}" method="post">
+    <fieldset>
+        {{form.csrf_token()}}
+        <div class="form-group">
+            {{ form.nome.label()}}
+            {{ form.nome(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.nickname.label()}}
+            {{ form.nickname(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.senha.label()}}
+            {{ form.senha(class="form-control") }}
+        </div>
+        <div>{{ form.salvar(class="btn btn-primary btn-salvar mt-3") }}</div>
+    </fieldset>
+</form>
+{% endblock %}
