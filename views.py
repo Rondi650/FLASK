@@ -4,6 +4,7 @@ from database import db
 from app import app
 from helpers import procurar_capa, deleta_arquivo
 import time
+from forms import FormularioJogo
 
 @app.route('/login')
 def login():
@@ -20,20 +21,27 @@ def index():
 def novo_jogo():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login'))
-    return render_template('novo.html', titulo='Inserir Novo Jogo')
+    form = FormularioJogo()
+    return render_template('novo.html', titulo='Inserir Novo Jogo', form=form)
 
 @app.route('/editar/<int:id>', methods=['GET'])
 def editar(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         return redirect(url_for('login'))
     jogos = Jogo.query.filter_by(id=id).first()   
+    form = FormularioJogo()
+    form.nome.data = jogos.nome
+    form.categoria.data = jogos.categoria
+    form.console.data = jogos.console
     
     capa_jogo = procurar_capa(jogos.id)
     
-    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos, capa_jogo=capa_jogo)
+    return render_template('editar.html', titulo='Editando Jogo', jogos = jogos, capa_jogo=capa_jogo, form=form)
 
 @app.route('/deletar/<int:id>')
 def deletar(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        return redirect(url_for('login'))    
     jogo = Jogo.query.filter_by(id=id).first()
     if jogo:
         db.session.delete(jogo)
@@ -44,27 +52,37 @@ def deletar(id):
 
 @app.route('/atualizar', methods = ['POST'])
 def atualizar():
-    id = request.form['id']
-    jogo = Jogo.query.filter_by(id=id).first()
-    jogo.nome = request.form['nome']
-    jogo.categoria = request.form['categoria']
-    jogo.console = request.form['console']
-    db.session.add(jogo)
-    db.session.commit()         
-    flash('Jogo editado com sucesso!') 
+    form = FormularioJogo(request.form)
+    
+    if form.validate_on_submit():
+        
+        id = request.form['id']
+        jogo = Jogo.query.filter_by(id=id).first()
+        jogo.nome = form.nome.data
+        jogo.categoria = form.categoria.data
+        jogo.console = form.console.data
+        db.session.add(jogo)
+        db.session.commit()         
+        flash('Jogo editado com sucesso!') 
 
-    arquivo = request.files['arquivo']
-    timestamp = time.time()
-    deleta_arquivo(jogo.id)
-    arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}-{timestamp}.jpg')
+        arquivo = request.files['arquivo']
+        timestamp = time.time()
+        deleta_arquivo(jogo.id)
+        arquivo.save(f'{app.config['UPLOAD_PATH']}\capa{jogo.id}-{timestamp}.jpg')
     
     return redirect(url_for('index'))
     
 @app.route('/criar', methods=['POST'])
 def criar_jogo():
-    nome = request.form['nome']
-    categoria = request.form['categoria']
-    console = request.form['console']
+    form = FormularioJogo(request.form)
+    
+    if not form.validate_on_submit():
+        return redirect(url_for('novo'))
+
+    nome = form.nome.data
+    categoria = form.categoria.data
+    console = form.console.data
+    
     jogo = Jogo(nome=nome, categoria=categoria, console=console)
     db.session.add(jogo)
     db.session.commit()

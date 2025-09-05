@@ -3,7 +3,7 @@ from database import db
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement= True)
     nome = db.Column(db.String(100))
     nickname = db.Column(db.String(20), unique=True)
     senha = db.Column(db.String(100))
