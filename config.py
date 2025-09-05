@@ -5,6 +5,7 @@ import os
 SECRET_KEY = 'Rondi'
 
 UPLOAD_PATH = os.path.join(os.path.dirname(__file__),'uploads')
+os.makedirs(UPLOAD_PATH, exist_ok=True)
 
 def init_app(app):
     connection_string = "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;DATABASE=Jogoteca;Trusted_Connection=yes;"
