@@ -23,17 +23,7 @@ def novo_usuario():
     
     if not form.validate_on_submit():
         return redirect(url_for('index'))
-    
-    nome = form.nome.data
-    nickname = form.nickname.data
-    senha = form.senha.data
-    
-    usuario = Usuario(nome=nome, nickname=nickname)
-    usuario.set_senha(senha)
-    db.session.add(usuario)
-    db.session.commit()
-    flash('Usuario Criado com Sucesso!')
-    
+
     return(redirect(url_for('index')))
 
 @app.route('/autenticar', methods=['POST'])
